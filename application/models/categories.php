@@ -40,13 +40,14 @@ class Categories extends CI_Model {
 
     function update($id, $data) {
         if (isset($data) && is_array($data) && isset($id) && is_numeric($id)){
-            $data['modified_at'] = date("YmdHis");
+            $data['modified_at'] = date("Y-m-d H:i:s",now());
             return $this->db->where(array(self::$key_name => $id))->update(self::$table_name, $data);
         }
     }
 
     function add($data) {
         if (isset($data) && is_array($data)) {
+            $data['created_at'] = date("Y-m-d H:i:s",now());
             return $this->db->insert(self::$table_name, $data);
         }
     }
