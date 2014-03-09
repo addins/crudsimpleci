@@ -13,8 +13,51 @@ class Category extends CI_Controller {
     }
 
     function index() {
+        $limit = $this->input->post('item_per_page');
+        if (!is_numeric($limit)){
+            $limit = $this->session->userdata('item_per_page');
+        }
+        $this->session->set_userdata(array('item_per_page' => $limit));
+        
+        $config['base_url'] = base_url() . 'category/index/';
+        $config['total_rows'] = $this->categories->count();
+        $config['per_page'] = $limit;
+        $config['uri_segment'] = $uri_seg = 3;
+
+        $offset = $this->uri->segment($uri_seg);
+        if (!is_numeric($offset)){
+            $offset = 0;
+        }
+
+        $config['full_tag_open'] = '<div class="pagination-centered"><ul class="pagination">';
+        $config['full_tag_close'] = '</ul></div>';
+        $config['first_link'] = '&inodot;&blacktriangleleft;';
+        $config['first_tag_open'] = '<li class="arrow">';
+        $config['first_tag_close'] = '</li>';
+        $config['last_link'] = '&blacktriangleright;&inodot;';
+        $config['last_tag_open'] = '<li class="arrow">';
+        $config['last_tag_close'] = '</li>';
+        $config['next_link'] = '&blacktriangleright;';
+        $config['next_tag_open'] = '<li class="arrow">';
+        $config['next_tag_close'] = '</li>';
+        $config['prev_link'] = '&blacktriangleleft;';
+        $config['prev_tag_open'] = '<li class="arrow">';
+        $config['prev_tag_close'] = '</li>';
+        $config['cur_tag_open'] = '<li class="current"><a>';
+        $config['cur_tag_close'] = '</a></li>';
+        $config['num_tag_open'] = '<li>';
+        $config['num_tag_close'] = '</li>';
+
+
+        $this->pagination->initialize($config);
+
+        $paging = $this->pagination->create_links();
+
         $viewbag['view_page'] = 'category/index';
-        $viewbag['view_model']['categories'] = $this->categories->get_all();
+        $viewbag['view_model']['categories'] = $this->categories->get_all($limit, $offset);
+        $viewbag['view_model']['paging'] = $paging;
+        $viewbag['view_model']['page_num'] = $offset;
+        $viewbag['view_model']['item_per_page'] = $limit;
         $viewbag['title'] = 'Category';
         $this->load->view('template/mainview', $viewbag);
     }
@@ -125,11 +168,12 @@ class Category extends CI_Controller {
                 $viewbag['view_page'] = 'category/delete_confirm';
                 $viewbag['title'] = 'Delete Category';
                 $this->load->view('template/mainview', $viewbag);
-            }else{
+            } else {
                 redirect('category');
             }
         }
     }
+
 }
 
 /* End of file category.php */

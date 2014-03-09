@@ -14,6 +14,10 @@ class Categories extends CI_Model {
         if (isset($id) && is_numeric($id))
             return $this->db->where(array(self::$key_name => $id))->get(self::$table_name);
     }
+    
+    function count(){
+        return $this->db->count_all(self::$table_name);
+    }
 
     function get_all($limit = NULL, $offset = NULL) {
         if (isset($limit) && is_numeric($limit))

@@ -73,7 +73,7 @@
         <div class="row">
             <div class="large-12 columns">
                 <hr>
-                <p class="footer">Page rendered in <strong>{elapsed_time}</strong> seconds</p>
+                <p class="footer"><?=safe_mailto('admin@local.host','Contact Us')?> | Page rendered in <strong>{elapsed_time}</strong> seconds</p>
             </div>
         </div>
         <script src="<?= base_url() ?>assets/js/vendor/jquery.js"></script>
