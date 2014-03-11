@@ -34,28 +34,42 @@
                     </ul>
                 </section>
             </nav>
-            
-<!-- Start of notification area           -->
-            <?php
-        $is_success = $this->session->flashdata('is_success');
-        if ($is_success != NULL):
-            ?>
+
+            <!-- Start of notification area           -->
+
             <div class="row">
                 <div class="large-12 columns">
-                    <div data-alert class="alert-box
+                    <!-- Start of flashdata notif -->
                     <?php
-                    if ($is_success === TRUE)
-                        echo ' success';
-                    else if ($is_success === FALSE)
-                        echo ' error';
-                    ?>">
-                             <?= $this->session->flashdata('message') ?>
-                        <a href="#" class="close">&times;</a>
-                    </div>
+                    $is_success = $this->session->flashdata('is_success');
+                    if ($is_success != NULL):
+                        ?>
+                        <div data-alert class="alert-box
+                        <?php
+                        if ($is_success === TRUE)
+                            echo ' success';
+                        else if ($is_success === FALSE)
+                            echo ' alert';
+                        ?>">
+                                 <?= $this->session->flashdata('message') ?>
+                            <a href="#" class="close">&times;</a>
+                        </div>
+                    <?php endif; ?>
+                    <!-- End of flashdata notif -->
+
+                    <!-- Start of form validation notif -->
+                    <?php
+                    $form_valid = validation_errors('<div data-alert class="alert-box alert">', '
+                            <a href="#" class="close">&times;</a>
+                        </div>');
+                    if ($form_valid != ''):
+                        ?>
+                        <?= $form_valid ?>
+                    <?php endif; ?>
+                    <!-- End of form validation notif -->
                 </div>
             </div>
-        <?php endif; ?>
-<!-- End of notification area           -->
+            <!-- End of notification area           -->
 
         </div>
 
@@ -73,7 +87,7 @@
         <div class="row">
             <div class="large-12 columns">
                 <hr>
-                <p class="footer"><?=safe_mailto('admin@local.host','Contact Us')?> | Page rendered in <strong>{elapsed_time}</strong> seconds</p>
+                <p class="footer"><?= safe_mailto('admin@local.host', 'Contact Us') ?> | Page rendered in <strong>{elapsed_time}</strong> seconds</p>
             </div>
         </div>
         <script src="<?= base_url() ?>assets/js/vendor/jquery.js"></script>

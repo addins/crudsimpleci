@@ -14,18 +14,18 @@ class Category extends CI_Controller {
 
     function index() {
         $limit = $this->input->post('item_per_page');
-        if (!is_numeric($limit)){
+        if (!is_numeric($limit)) {
             $limit = $this->session->userdata('item_per_page');
         }
         $this->session->set_userdata(array('item_per_page' => $limit));
-        
+
         $config['base_url'] = base_url() . 'category/index/';
         $config['total_rows'] = $this->categories->count();
         $config['per_page'] = $limit;
         $config['uri_segment'] = $uri_seg = 3;
 
         $offset = $this->uri->segment($uri_seg);
-        if (!is_numeric($offset)){
+        if (!is_numeric($offset)) {
             $offset = 0;
         }
 
@@ -80,64 +80,73 @@ class Category extends CI_Controller {
      * @param type $id 
      */
     function form($id = NULL) {
+        $validation = NULL;
         if ($this->input->server('REQUEST_METHOD') === "POST") {
-            $key = $this->input->post('id');
-            if (isset($key) && $key === "") {
-                //add new data
-                $data = array(
-                    'name' => $this->input->post('name'),
-                    'description' => $this->input->post('description')
-                );
-                $this->categories->add($data);
+            if (!isset($id) && !is_numeric($id))
+                $id = $key = $this->input->post('id');
+            $this->form_validation->set_rules('name', 'Category Name', 'trim|required|max_length[32]|alpha_dash|xss_clean');
+            $this->form_validation->set_rules('description', 'Category Description', 'trim|max_length[255]|alpha_dash|xss_clean');
+            $validation = $this->form_validation->run();
+            if ($validation === TRUE) {
 
-                //untuk notifikasi
-                $res = array(
-                    'operation' => 'insert',
-                    'is_success' => TRUE,
-                    'message' => 'Save success.'
-                );
-                if ($this->db->affected_rows() < 1) {
-                    $res['is_success'] = FALSE;
-                    $res['message'] = 'Save failed!';
+                if (isset($key) && $key === "") {
+                    //add new data
+                    $data = array(
+                        'name' => $this->input->post('name'),
+                        'description' => $this->input->post('description')
+                    );
+                    $this->categories->add($data);
+
+                    //untuk notifikasi
+                    $res = array(
+                        'operation' => 'insert',
+                        'is_success' => TRUE,
+                        'message' => 'Save success.'
+                    );
+                    if ($this->db->affected_rows() < 1) {
+                        $res['is_success'] = FALSE;
+                        $res['message'] = 'Save failed!';
+                    }
+                    $this->session->set_flashdata($res);
+                    //end notifikasi
+
+                    redirect('category');
                 }
-                $this->session->set_flashdata($res);
-                //end notifikasi
+                if (isset($key) && is_numeric($key)) {
+                    //update data
+                    $data = array(
+                        'name' => $this->input->post('name'),
+                        'description' => $this->input->post('description')
+                    );
+                    $this->categories->update($key, $data);
 
-                redirect('category');
-            }
-            if (isset($key) && is_numeric($key)) {
-                //update data
-                $data = array(
-                    'name' => $this->input->post('name'),
-                    'description' => $this->input->post('description')
-                );
-                $this->categories->update($key, $data);
+                    //untuk notifikasi
+                    $res = array(
+                        'operation' => 'update',
+                        'is_success' => TRUE,
+                        'message' => 'Update success.'
+                    );
+                    if ($this->db->affected_rows() < 1) {
+                        $res['is_success'] = FALSE;
+                        $res['message'] = 'Update failed!';
+                    }
+                    $this->session->set_flashdata($res);
+                    //end notifikasi
 
-                //untuk notifikasi
-                $res = array(
-                    'operation' => 'update',
-                    'is_success' => TRUE,
-                    'message' => 'Update success.'
-                );
-                if ($this->db->affected_rows() < 1) {
-                    $res['is_success'] = FALSE;
-                    $res['message'] = 'Update failed!';
+                    redirect('category');
                 }
-                $this->session->set_flashdata($res);
-                //end notifikasi
-
-                redirect('category');
             }
-        } else {
-            if (isset($id) && is_numeric($id)) {
-                $viewbag['view_model']['category'] = $this->categories->get($id);
-                $viewbag['title'] = 'Edit Category';
-            } else {
-                $viewbag['title'] = 'Add Category';
-            }
-            $viewbag['view_page'] = 'category/form';
-            $this->load->view('template/mainview', $viewbag);
         }
+        if (isset($id) && is_numeric($id)) {
+            if (!isset($validation))
+                $viewbag['view_model']['category'] = $this->categories->get($id);
+            $viewbag['id'] = $id;
+            $viewbag['title'] = 'Edit Category';
+        } else {
+            $viewbag['title'] = 'Add Category';
+        }
+        $viewbag['view_page'] = 'category/form';
+        $this->load->view('template/mainview', $viewbag);
     }
 
     function delete($id) {
