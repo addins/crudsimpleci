@@ -48,9 +48,9 @@
                     <div class="small-8 columns">
             <!--            <input type="text" name="item_per_page" placeholder="Items per page">-->
                         <select name="item_per_page" id="item_per_page">
-                            <option <?=$view_model['item_per_page']==='3'?'selected':''?>>3</option>
-                            <option <?=$view_model['item_per_page']==='5'?'selected':''?>>5</option>
-                            <option <?=$view_model['item_per_page']==='10'?'selected':''?>>10</option>
+                            <option <?=$view_model['item_per_page']===3 ?'selected':''?>>3</option>
+                            <option <?=$view_model['item_per_page']===5 ?'selected':''?>>5</option>
+                            <option <?=$view_model['item_per_page']===10 ?'selected':''?>>10</option>
                         </select>
                     </div>
                     <div class="small-4 columns">

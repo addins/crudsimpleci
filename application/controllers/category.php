@@ -16,7 +16,12 @@ class Category extends CI_Controller {
         $limit = $this->input->post('item_per_page');
         if (!is_numeric($limit)) {
             $limit = $this->session->userdata('item_per_page');
+            if (!is_numeric($limit)) {
+                $limit = 5;
+            }
         }
+
+        $limit = (int) $limit;
         $this->session->set_userdata(array('item_per_page' => $limit));
 
         $config['base_url'] = base_url() . 'category/index/';
@@ -85,7 +90,7 @@ class Category extends CI_Controller {
             if (!isset($id) && !is_numeric($id))
                 $id = $key = $this->input->post('id');
             $this->form_validation->set_rules('name', 'Category Name', 'trim|required|max_length[32]|alpha_dash|xss_clean');
-            $this->form_validation->set_rules('description', 'Category Description', 'trim|max_length[255]|alpha_dash|xss_clean');
+            $this->form_validation->set_rules('description', 'Category Description', 'trim|max_length[255]|htmlspecialchars|xss_clean');
             $validation = $this->form_validation->run();
             if ($validation === TRUE) {
 
