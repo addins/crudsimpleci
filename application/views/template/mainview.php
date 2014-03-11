@@ -14,7 +14,7 @@
         <script src="<?= base_url() ?>assets/js/vendor/modernizr.js"></script>
     </head>
     <body>
-        <div class="fixed sticky">
+        <div class="sticky">
             <nav data-topbar class="top-bar fixed">
                 <ul class="title-area">
                     <li class="name"><h1><a href="<?= base_url() ?>">CRUD Simple</a></h1></li>
